@@ -1,9 +1,10 @@
 #include "mergeSort.h"
+#include "linkedList.h"
 
 // Function to split the singly linked list into two halves
-struct Node* split(struct Node* head) {
-    struct Node* fast = head;
-    struct Node* slow = head;
+struct taskListNode* split(struct taskListNode* head) {
+    struct taskListNode* fast = head;
+    struct taskListNode* slow = head;
 
     // Move fast pointer two steps and slow pointer
     // one step until fast reaches the end
@@ -15,13 +16,13 @@ struct Node* split(struct Node* head) {
     }
 
     // Split the list into two halves
-    struct Node* temp = slow->next;
+    struct taskListNode* temp = slow->next;
     slow->next = NULL;
     return temp;
 }
 
 // Function to merge two sorted singly linked lists
-struct Node* merge(struct Node* first, struct Node* second) {
+struct taskListNode* merge(struct taskListNode* first, struct taskListnode* second) {
   
     // If either list is empty, return the other list
     if (first == NULL) return second;
@@ -43,7 +44,7 @@ struct Node* merge(struct Node* first, struct Node* second) {
 }
 
 // Function to perform merge sort on a singly linked list
-struct Node* MergeSort(struct Node* head) {
+struct taskListNode* MergeSort(struct taskListNode* head) {
   
     // Base case: if the list is empty or has only one node, 
     // it's already sorted
@@ -52,7 +53,7 @@ struct Node* MergeSort(struct Node* head) {
     }
 
     // Split the list into two halves
-    struct Node* second = split(head);
+    struct taskLisNode* second = split(head);
 
     // Recursively sort each half
     head = MergeSort(head);
@@ -62,8 +63,8 @@ struct Node* MergeSort(struct Node* head) {
     return merge(head, second);
 }
 
-void printList(struct Node* head) {
-    struct Node* curr = head;
+void printList(struct taskListNode* head) {
+    struct taskListNode* curr = head;
     while (curr != NULL) {
         printf("%d ", curr->data);
         curr = curr->next;
@@ -72,25 +73,10 @@ void printList(struct Node* head) {
 }
 
 // Function to create a new node
-struct Node* createNode(int x) {
-    struct Node* newNode = 
-      (struct Node*)malloc(sizeof(struct Node));
+struct taskListNode* createNode(int x) {
+    struct taskListNode* newNode = 
+      (struct taskListNode*)malloc(sizeof(struct taskListNode));
     newNode->data = x;
     newNode->next = NULL;
     return newNode;
 }
-
-int main() {
-    // Create a hard-coded singly linked list:
-    // 9 -> 8 -> 5 -> 2
-    struct Node* head = createNode(9);
-    head->next = createNode(8);
-    head->next->next = createNode(5);
-    head->next->next->next = createNode(2);
-
-    head = MergeSort(head);
-    printList(head);
-
-    return 0;
-}
-
