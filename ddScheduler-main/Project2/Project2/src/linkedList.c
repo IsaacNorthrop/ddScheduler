@@ -1,12 +1,4 @@
-#include "../src/linkedList.h"
-
-// Define the taskListNode structure
-struct taskListNode {
-    int execution_time;
-    int period;
-    int deadline;
-    struct taskListNode* next;
-};
+#include "../inc/linkedList.h"
 
 // Function to create a new node 
 struct taskListNode* createNode(int execution_time, int period) {
@@ -42,7 +34,7 @@ void insertAtEnd(struct taskListNode** head, int execution_time, int period) {
 void insertAtPosition(struct taskListNode** head, int execution_time, int period, int position) {
     struct taskListNode* newNode = createNode(execution_time, period);
     if (position == 0) {
-        insertAtFirst(head,execution_time,data);
+        insertAtFirst(head,execution_time,period);
         return;
     }
     struct taskListNode* temp = *head;
@@ -115,7 +107,7 @@ void deleteAtPosition(struct taskListNode** head, int position) {
 void print(struct taskListNode* head) {
     struct taskListNode* temp = head;
     while (temp != NULL) {
-        printf("%d -> ", temp->data);
+        printf("%d -> ", temp->deadline);
         temp = temp->next;
     }
     printf("NULL\n");

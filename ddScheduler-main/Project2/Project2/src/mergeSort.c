@@ -1,5 +1,4 @@
-#include "mergeSort.h"
-#include "linkedList.h"
+#include "../inc/mergeSort.h"
 
 // Function to split the singly linked list into two halves
 struct taskListNode* split(struct taskListNode* head) {
@@ -22,14 +21,14 @@ struct taskListNode* split(struct taskListNode* head) {
 }
 
 // Function to merge two sorted singly linked lists
-struct taskListNode* merge(struct taskListNode* first, struct taskListnode* second) {
+struct taskListNode* merge(struct taskListNode* first, struct taskListNode* second) {
   
     // If either list is empty, return the other list
     if (first == NULL) return second;
     if (second == NULL) return first;
 
     // Pick the smaller value between first and second nodes
-    if (first->data < second->data) {
+    if (first->deadline < second->deadline) {
         // Recursively merge the rest of the lists and
         // link the result to the current node
         first->next = merge(first->next, second);
@@ -53,7 +52,7 @@ struct taskListNode* MergeSort(struct taskListNode* head) {
     }
 
     // Split the list into two halves
-    struct taskLisNode* second = split(head);
+    struct taskListNode* second = split(head);
 
     // Recursively sort each half
     head = MergeSort(head);
@@ -66,17 +65,8 @@ struct taskListNode* MergeSort(struct taskListNode* head) {
 void printList(struct taskListNode* head) {
     struct taskListNode* curr = head;
     while (curr != NULL) {
-        printf("%d ", curr->data);
+        printf("%d ", curr->deadline);
         curr = curr->next;
     }
     printf("\n");
-}
-
-// Function to create a new node
-struct taskListNode* createNode(int x) {
-    struct taskListNode* newNode = 
-      (struct taskListNode*)malloc(sizeof(struct taskListNode));
-    newNode->data = x;
-    newNode->next = NULL;
-    return newNode;
 }
