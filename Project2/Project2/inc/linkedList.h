@@ -5,14 +5,16 @@
 #include <stdlib.h>
 
 struct taskListNode {
-    int data;
+    int execution_time;
+    int period;
+    int deadline;
     struct taskListNode* next;
 };
 
-struct taskListNode* createNode(int data);
-void insertAtFirst(struct taskListNode** head, int data);
-void insertAtEnd(struct taskListNode** head, int data);
-void insertAtPosition(struct taskListNode** head, int data, int position);
+struct taskListNode* createNode(int execution_time, int period);
+void insertAtFirst(struct taskListNode** head, int execution_time, int period);
+void insertAtEnd(struct taskListNode** head, int execution_time, int period);
+void insertAtPosition(struct taskListNode** head, int execution_time, int period, int position);
 void deleteFromFirst(struct taskListNode** head);
 void deleteFromEnd(struct taskListNode** head);
 void deleteAtPosition(struct taskListNode** head, int position);
