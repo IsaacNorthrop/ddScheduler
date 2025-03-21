@@ -1,8 +1,6 @@
 #include "../inc/DDS.h"
 
 void checkOverdue(struct taskListNode** active, struct taskListNode** overdue){
-	int current_time = xTaskGetTickCount();
-
     if (*head == NULL)
         return;
 
