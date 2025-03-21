@@ -6,35 +6,33 @@ struct taskListNode* createNode(int execution_time, int period) {
     newNode->execution_time = execution_time;
     newNode->period = period;
     newNode->next = NULL;
+    newNode->release_time = 0;
     return newNode;
 }
 
 // Function to insert a new element at the beginning of the singly linked list
-void insertAtFirst(struct taskListNode** head, int execution_time, int period) {
-    struct taskListNode* newNode = createNode(execution_time, period);
-    newNode->next = *head;
-    *head = newNode;
+void insertAtFirst(struct taskListNode** head, struct taskListNode* node) {
+    node->next = *head;
+    *head = node;
 }
 
 // Function to insert a new element at the end of the singly linked list
-void insertAtEnd(struct taskListNode** head, int execution_time, int period) {
-    struct taskListNode* newNode = createNode(execution_time, period);
+void insertAtEnd(struct taskListNode** head, struct taskListNode* node) {
     if (*head == NULL) {
-        *head = newNode;
+        *head = node;
         return;
     }
     struct taskListNode* temp = *head;
     while (temp->next != NULL) {
         temp = temp->next;
     }
-    temp->next = newNode;
+    temp->next = node;
 }
 
 // Function to insert a new element at a specific position in the singly linked list
-void insertAtPosition(struct taskListNode** head, int execution_time, int period, int position) {
-    struct taskListNode* newNode = createNode(execution_time, period);
+void insertAtPosition(struct taskListNode** head, struct taskListNode* node, int position) {
     if (position == 0) {
-        insertAtFirst(head,execution_time,period);
+        insertAtFirst(head, node);
         return;
     }
     struct taskListNode* temp = *head;
@@ -43,11 +41,10 @@ void insertAtPosition(struct taskListNode** head, int execution_time, int period
     }
     if (temp == NULL) {
         printf("Position out of range\n");
-        free(newNode);
         return;
     }
-    newNode->next = temp->next;
-    temp->next = newNode;
+    node->next = temp->next;
+    temp->next = node;
 }
 
 // Function to delete the first node of the singly linked list

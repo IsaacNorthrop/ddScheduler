@@ -8,13 +8,14 @@ struct taskListNode {
     int execution_time;
     int period;
     int deadline;
+    int release_time;
     struct taskListNode* next;
 };
 
 struct taskListNode* createNode(int execution_time, int period);
-void insertAtFirst(struct taskListNode** head, int execution_time, int period);
-void insertAtEnd(struct taskListNode** head, int execution_time, int period);
-void insertAtPosition(struct taskListNode** head, int execution_time, int period, int position);
+void insertAtFirst(struct taskListNode** head, struct taskListNode* node);
+void insertAtEnd(struct taskListNode** head, struct taskListNode* node);
+void insertAtPosition(struct taskListNode** head, struct taskListNode* node, int position);
 void deleteFromFirst(struct taskListNode** head);
 void deleteFromEnd(struct taskListNode** head);
 void deleteAtPosition(struct taskListNode** head, int position);

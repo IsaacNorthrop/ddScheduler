@@ -149,6 +149,7 @@ functionality.
 /* Local includes. */
 #include "../inc/DDS.h"
 #include "../inc/linkedList.h"
+#include "../inc/DDS.h"
 
 
 
@@ -167,9 +168,17 @@ static void prvSetupHardware( void );
  */
 static void DDS_Task( void *pvParameters );
 static void Generator_Task( void *pvParameters );
+static void User_Defined_Task( void *pvParameters );
+static void Monitor_Task( void *pvParameters );
 
 xQueueHandle Generator_Queue = 0;
 xQueueHandle User_Defined_Queue = 0;
+xQueueHandle Monitor_Queue = 0;
+
+TaskHandle_t DDS;
+TaskHandle_t Generator;
+TaskHandle_t User_Defined;
+TaskHandle_t Monitor;
 
 
 /*-----------------------------------------------------------*/
@@ -184,18 +193,25 @@ int main(void)
 
 	/* Create the queue used by the queue send and queue receive tasks.
 	http://www.freertos.org/a00116.html */
+
+	// size of each item needs to be adjusted
+
 	Generator_Queue = xQueueCreate( 	mainQUEUE_LENGTH,		/* The number of items the queue can hold. */
 							sizeof( uint16_t ) );	/* The size of each item the queue holds. */
 
-	User_Defined_Queue = xQueueCreate( 	mainQUEUE_LENGTH,
-			sizeof( uint16_t ) );
+	User_Defined_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( uint16_t ) );
+
+	Monitor_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( uint16_t ) );
 
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry( Generator_Queue, "Generator_Queue" );
 	vQueueAddToRegistry( User_Defined_Queue, "User_Defined_Queue" );
+	vQueueAddToRegistry( Monitor_Queue, "Monitor_Queue" );
 
-	xTaskCreate( DDS_Task, "DDS", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
-	xTaskCreate( Generator_Task, "Generator", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
+	xTaskCreate( DDS_Task, "DDS", configMINIMAL_STACK_SIZE, NULL, 2, &DDS);
+	xTaskCreate( Generator_Task, "Generator", configMINIMAL_STACK_SIZE, NULL, 2, &Generator);
+	xTaskCreate( User_Defined_Task, "User_Defined", configMINIMAL_STACK_SIZE, NULL, 2, &User_Defined);
+	xTaskCreate( Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, &Monitor);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -211,17 +227,30 @@ static void DDS_Task( void *pvParameters )
 	struct taskListNode* activeHead = NULL;
 	struct taskListNode* completedHead = NULL;
 	struct taskListNode* overdueHead = NULL;
+	int current_hyper = start_time;
 
 	struct taskListNode* temp_node;
 	int temp_execution;
 	int result;
+	vTaskSuspend(Monitor);
+	vTaskSuspend(User_Defined);
 
 	while(1)
 	{
+		if(current_hyper + 1500 < xTaskGetTickCount()){
+			current_hyper = xTaskGetTickCount();
+			struct taskListNode*** lists = {&activeHead, &completedHead, &overdueHead};
+			if(xQueueSend(Monitor_Queue, &lists, 1000)){
+				vTaskResume(Monitor);
+				vTaskSuspend(DDS);
+			}
+			vTaskSuspend(Monitor);
+		}
 		if( xQueueReceive(Generator_Queue,&temp_node,1000))
 		{
-			insertAtEnd(activeHead, temp_node->execution_time, temp_node->period);
-			printf("%d\n", temp_node->execution_time);
+			temp_node->release_time = xTaskGetTickCount();
+			temp_node->deadline = release_time + temp_node->period;
+			insertAtEnd(activeHead, temp_node);
 		}
 		else
 		{
@@ -235,6 +264,7 @@ static void DDS_Task( void *pvParameters )
 		if(xQueueSend(User_Defined_Queue, &temp_execution, 1000)){
 			int temp = 0;
 		}
+		vTaskResume(User_Defined);
 		vTaskSuspend(DDS_Task);
 		if(xQueueReceive(User_Defined_Queue, &result, 1000)){
 			if(result)
@@ -260,6 +290,16 @@ static void Generator_Task( void *pvParameters )
 			vTaskDelay(1000);
 		}
 	}
+}
+
+static void User_Defined_Task( void *pvParameters )
+{
+	return;
+}
+
+static void Monitor_Task( void *pvParameters )
+{
+	return;
 }
 
 
