@@ -4,11 +4,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+struct DDTask {
+	taskHandle_t task;
+	int type;
+	uint32_t = task_id;
+	uint32_t = realease_time;
+	uint32_t = absolute_deadline;
+	uint32_t = completion_time;
+};
+
 struct taskListNode {
-    int execution_time;
-    int period;
-    int deadline;
-    int release_time;
+	DDTask task;
     struct taskListNode* next;
 };
 
