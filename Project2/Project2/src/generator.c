@@ -16,7 +16,7 @@ void Gen1 (void *taskParamters){
 	vTaskSuspend(task);
 
 	//Call to our create dd task function happens here
-	createDDTask(&task);
+	createDDTask(task, 1, xTaskGetTickCount() + TASK_1_PERIOD);
 
 	vTaskDelay(TASK_1_PERIOD);
 }
@@ -35,6 +35,7 @@ void Gen2 (void *taskParameters){
 	vTaskSuspend(task);
 
 	//Call to our create dd task function happens here
+	createDDTask(task, 2, TaskGetTickCount() + TASK_2_ERIOD);
 
 	vTaskDelay(TASK_2_PERIOD);
 }
@@ -53,11 +54,13 @@ void Gen3 (void *taskParameters){
 	vTaskSuspend(task);
 
 	//Call to our create dd task function happens here
+	createDDTask(task, 3, xTaskGetTickCount() + TASK_3_PERIOD);
+
 
 	vTaskDelay(TASK_3_PERIOD);
 }
 
-void createDDTask (void *task){
+void createDDTask (){
 
 
 
