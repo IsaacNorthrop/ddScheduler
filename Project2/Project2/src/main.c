@@ -299,6 +299,16 @@ static void User_Defined_Task( void *pvParameters )
 
 static void Monitor_Task( void *pvParameters )
 {
+	struct taskListNode*** lists = {NULL, NULL, NULL};
+	while(1){
+		vTaskSuspend(Monitor);
+		if(xQueueReceive(Monitor_Queue, &lists, 1000)){
+			for(int i = 0; i<3; i++)
+				print(&lists[i]);
+		}
+		vTaskResume(DDS);
+	}
+	
 	return;
 }
 
