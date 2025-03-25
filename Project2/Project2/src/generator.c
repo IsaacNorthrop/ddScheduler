@@ -35,7 +35,7 @@ void Gen2 (void *taskParameters){
 	vTaskSuspend(task);
 
 	//Call to our create dd task function happens here
-	createDDTask(task, 2, TaskGetTickCount() + TASK_2_ERIOD);
+	createDDTask(task, 2, TaskGetTickCount() + TASK_2_PERIOD);
 
 	vTaskDelay(TASK_2_PERIOD);
 }
