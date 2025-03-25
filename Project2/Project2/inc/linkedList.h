@@ -1,6 +1,6 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
-
+#include "FreeRTOS.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,6 +8,9 @@ struct taskListNode {
     int execution_time;
     int period;
     int deadline;
+    int release_time;
+    int task_id;
+    TaskHandle_t task;
     struct taskListNode* next;
 };
 

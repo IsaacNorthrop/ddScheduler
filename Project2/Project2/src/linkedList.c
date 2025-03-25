@@ -1,15 +1,19 @@
 #include "../inc/linkedList.h"
+#include <stdio.h>
+#include "FreeRTOS.h"
+#include <stdlib.h>
 
 // Function to create a new node 
-struct taskListNode* createNode(int execution_time, int period) {
+struct taskListNode* createNode(TaskHandle_t task, int execution_time, int period, int id) {
     struct taskListNode* newNode = (struct taskListNode*)malloc(sizeof(struct taskListNode));
     newNode->execution_time = execution_time;
     newNode->period = period;
     newNode->next = NULL;
     newNode->release_time = 0;
+    newNode->task_id = id;
+    newNode->task = task;
     return newNode;
 }
-
 // Function to insert a new element at the beginning of the singly linked list
 void insertAtFirst(struct taskListNode** head, struct taskListNode* node) {
     node->next = *head;
