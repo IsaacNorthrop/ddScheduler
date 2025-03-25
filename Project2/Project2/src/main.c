@@ -260,8 +260,9 @@ static void DDS_Task( void *pvParameters )
 			activeHead = MergeSort(&activeHead);
 		}
 		checkOverdue(&activeHead, &overdueHead);
-
-		if(xQueueSend(User_Defined_Queue, &temp_execution, 1000)){
+		temp_node* = activeHead->next; // pointers may be wrong here
+		deleteFromFirst(&activeHead);
+		if(xQueueSend(User_Defined_Queue, &temp_node, 1000)){ // sending node to user defined task
 			int temp = 0;
 		}
 		vTaskResume(User_Defined);
