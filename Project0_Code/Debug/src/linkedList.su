@@ -1,0 +1,8 @@
+linkedList.c:8:22:createNode	32	static
+linkedList.c:20:6:insertAtFirst	16	static
+linkedList.c:26:6:insertAtEnd	24	static
+linkedList.c:39:6:insertAtPosition	32	static
+linkedList.c:57:6:deleteFromFirst	24	static
+linkedList.c:68:6:deleteFromEnd	24	static
+linkedList.c:87:6:deleteAtPosition	32	static
+linkedList.c:110:6:print	24	static

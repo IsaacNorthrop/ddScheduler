@@ -1,0 +1,3 @@
+mergeSort.c:11:22:split	32	static
+mergeSort.c:31:22:merge	16	static
+mergeSort.c:53:22:MergeSort	24	static
