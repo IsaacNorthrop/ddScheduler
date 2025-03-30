@@ -210,7 +210,7 @@ int main(void)
 
 	xTaskCreate( DDS_Task, "DDS", configMINIMAL_STACK_SIZE, NULL, 2, &DDS);
 	xTaskCreate( Gen1_Task, "Gen1", configMINIMAL_STACK_SIZE, NULL, 2, &Gen1);
-	//xTaskCreate( Gen2_Task, "Gen2", configMINIMAL_STACK_SIZE, NULL, 2, &Gen2);
+	xTaskCreate( Gen2_Task, "Gen2", configMINIMAL_STACK_SIZE, NULL, 2, &Gen2);
 	//xTaskCreate( Gen3_Task, "Gen3", configMINIMAL_STACK_SIZE, NULL, 2, &Gen3);
 	xTaskCreate( Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, &Monitor);
 
@@ -264,7 +264,7 @@ static void DDS_Task( void *pvParameters )
 		struct taskListNode* activeNode = activeHead; // pointers may be wrong here
 		activeNode->next = NULL;
 		if(xQueueSend(User_Defined_Queue, &activeNode, 1000)){
-			vTaskResume(temp_node->task);
+			vTaskResume(activeNode->task);
 			vTaskSuspend(DDS);
 		}
 		if(xQueueReceive(User_Defined_Queue, &result, 1000)){

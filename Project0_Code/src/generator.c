@@ -30,30 +30,22 @@ void Gen1_Task (void *taskParamters){
 	}
 }
 
-void Gen2_Task (void *taskParameters){
+void Gen2_Task (void *taskParamters){
+	TaskHandle_t task2;
+	xTaskCreate(User_Defined_Task, "User_Defined_Task1", configMINIMAL_STACK_SIZE, NULL, 1, &task2); // Create task with placeholder priority
+	vTaskSuspend(task2);
 	while (1){
-		// Create initial FreeRTOS F-Task
-		TaskHandle_t task;
-		xTaskCreate(User_Defined_Task, "User_Defined_Task", configMINIMAL_STACK_SIZE, NULL, 1, &task); // Create task with placeholder priority
-		//vTaskSuspend(task);
-
-		// Call to our create dd task function happens here
-		createDDTask(task, 2, TASK_2_EXEC, TASK_2_PERIOD);
-
+		createDDTask(task2, 2, TASK_2_EXEC, TASK_2_PERIOD);
 		vTaskDelay(TASK_2_PERIOD);
 	}
 }
 
-void Gen3_Task (void *taskParameters){
-	while(1){
-		// Create initial FreeRTOS F-Task
-		TaskHandle_t task;
-		xTaskCreate(User_Defined_Task, "User_Defined_Task", configMINIMAL_STACK_SIZE, NULL, 1, &task); // Create task with placeholder priority
-		//vTaskSuspend(task);
-
-		// Call to our create dd task function happens here
-		createDDTask(task, 3, TASK_3_EXEC, TASK_3_PERIOD);
-
+void Gen3_Task (void *taskParamters){
+	TaskHandle_t task3;
+	xTaskCreate(User_Defined_Task, "User_Defined_Task1", configMINIMAL_STACK_SIZE, NULL, 1, &task3); // Create task with placeholder priority
+	vTaskSuspend(task3);
+	while (1){
+		createDDTask(task3, 3, TASK_3_EXEC, TASK_3_PERIOD);
 		vTaskDelay(TASK_3_PERIOD);
 	}
 }
