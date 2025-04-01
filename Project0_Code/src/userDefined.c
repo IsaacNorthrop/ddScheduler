@@ -19,6 +19,7 @@
 #include "../inc/main.h"
 
 extern xQueueHandle User_Defined_Queue;
+extern xQueueHandle Result_Queue;
 extern TaskHandle_t DDS;
 
 void User_Defined_Task(void *pvParameters) {
@@ -36,7 +37,7 @@ void User_Defined_Task(void *pvParameters) {
             while (xTaskGetTickCount() - start < duration);
 
             int result = 1; // 1 for success
-            xQueueSend(User_Defined_Queue, &result, portMAX_DELAY);
+            xQueueSend(Result_Queue, &result, portMAX_DELAY);
             vTaskResume(DDS);
             vTaskSuspend(currentTask->task);
         }

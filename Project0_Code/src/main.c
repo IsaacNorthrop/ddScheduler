@@ -173,6 +173,7 @@ static void Monitor_Task( void *pvParameters );
 xQueueHandle Generator_Queue = 0;
 xQueueHandle User_Defined_Queue = 0;
 xQueueHandle Monitor_Queue = 0;
+xQueueHandle Result_Queue = 0;
 
 SemaphoreHandle_t monitorSemaphore;
 
@@ -197,20 +198,26 @@ int main(void)
 	// Create the queue used by the queue send and queue receive tasks.
 
 	// size of each item needs to be adjusted
-	Generator_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( struct taskListNode* ) );
+	Generator_Queue = xQueueCreate(	mainQUEUE_LENGTH, sizeof( struct taskListNode* ) );
 
 	User_Defined_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( struct taskListNode* ) );
 
 	Monitor_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( struct ListGroup ) );
 
+	Result_Queue = xQueueCreate(mainQUEUE_LENGTH, sizeof(int) );
+
+	printf("Queues created successfully\n");
 	/* Add to the registry, for the benefit of kernel aware debugging. */
+
+	printf("At line 207\n");
+
 	vQueueAddToRegistry( Generator_Queue, "Generator_Queue" );
 	vQueueAddToRegistry( User_Defined_Queue, "User_Defined_Queue" );
 	vQueueAddToRegistry( Monitor_Queue, "Monitor_Queue" );
 
 	xTaskCreate( DDS_Task, "DDS", configMINIMAL_STACK_SIZE, NULL, 2, &DDS);
 	xTaskCreate( Gen1_Task, "Gen1", configMINIMAL_STACK_SIZE, NULL, 2, &Gen1);
-	xTaskCreate( Gen2_Task, "Gen2", configMINIMAL_STACK_SIZE, NULL, 2, &Gen2);
+	//xTaskCreate( Gen2_Task, "Gen2", configMINIMAL_STACK_SIZE, NULL, 2, &Gen2);
 	//xTaskCreate( Gen3_Task, "Gen3", configMINIMAL_STACK_SIZE, NULL, 2, &Gen3);
 	xTaskCreate( Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, &Monitor);
 
@@ -245,6 +252,7 @@ static void DDS_Task( void *pvParameters )
 			lists.completedHead = completedHead;
 			lists.overdueHead = overdueHead;
 			if(xQueueSend(Monitor_Queue, &lists, 1000))
+				printf("DDS: Gave monitorSemaphore\n");
 				xSemaphoreGive(monitorSemaphore);
 		}
 		if( xQueueReceive(Generator_Queue,&temp_node,1000))
@@ -267,12 +275,15 @@ static void DDS_Task( void *pvParameters )
 			vTaskResume(activeNode->task);
 			vTaskSuspend(DDS);
 		}
-		if(xQueueReceive(User_Defined_Queue, &result, 1000)){
+		checkOverdue(&activeHead, &overdueHead);
+		if(xQueueReceive(Result_Queue, &result, 1000)){
 			deleteFromFirst(&activeHead);
-			if(result)
+			if(result){
+				printf("Moving node %p [id=%d] from activeHead to completedHead\n", (void*)temp_node, temp_node->task_id);
 				insertAtEnd(&completedHead, temp_node);
-			else
+			}else{
 				insertAtEnd(&overdueHead, temp_node);
+			}
 		}
 	}
 }
