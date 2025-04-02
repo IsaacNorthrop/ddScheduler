@@ -26,7 +26,7 @@ void Gen1_Task (void *taskParamters){
 	vTaskSuspend(task1);
 	while (1){
 		createDDTask(task1, 1, TASK_1_EXEC, TASK_1_PERIOD);
-		vTaskDelay(TASK_1_PERIOD);
+		vTaskDelay(pdMS_TO_TICKS(TASK_1_PERIOD));
 	}
 }
 
@@ -36,7 +36,7 @@ void Gen2_Task (void *taskParamters){
 	vTaskSuspend(task2);
 	while (1){
 		createDDTask(task2, 2, TASK_2_EXEC, TASK_2_PERIOD);
-		vTaskDelay(TASK_2_PERIOD);
+		vTaskDelay(pdMS_TO_TICKS(TASK_2_PERIOD));
 	}
 }
 
@@ -46,7 +46,7 @@ void Gen3_Task (void *taskParamters){
 	vTaskSuspend(task3);
 	while (1){
 		createDDTask(task3, 3, TASK_3_EXEC, TASK_3_PERIOD);
-		vTaskDelay(TASK_3_PERIOD);
+		vTaskDelay(pdMS_TO_TICKS(TASK_3_PERIOD));
 	}
 }
 

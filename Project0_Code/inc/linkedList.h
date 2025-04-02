@@ -12,6 +12,7 @@ struct taskListNode {
     int deadline;
     int release_time;
     int task_id;
+    int completion_time;
     TaskHandle_t task;  // Handle to the task
     struct taskListNode* next;  // Pointer to the next node
 };
@@ -29,7 +30,7 @@ void deleteFromFirst(struct taskListNode** head);
 void deleteFromEnd(struct taskListNode** head);
 void deleteAtPosition(struct taskListNode** head, int position);
 
-// Function to print the linked list
+int count(struct taskListNode* head);
 void print(struct taskListNode* head);
 
 #endif

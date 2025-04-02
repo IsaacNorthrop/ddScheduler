@@ -24,20 +24,22 @@ extern TaskHandle_t DDS;
 
 void User_Defined_Task(void *pvParameters) {
 
-	printf("WE ARE IN USER DEFINED TASK\n");
     struct taskListNode* currentTask;
+    int result;
 
     while (1) {
         // Wait for task pointer from DDS
+    	result = 0;
         if ( xQueueReceive(User_Defined_Queue,&currentTask,1000)) {
 
             TickType_t start = xTaskGetTickCount();
             TickType_t duration = pdMS_TO_TICKS(currentTask->execution_time);
 
-            while (xTaskGetTickCount() - start < duration);
+            vTaskDelayUntil(&start, duration);
 
-            int result = 1; // 1 for success
+            result = 1; // 1 for success
             xQueueSend(Result_Queue, &result, portMAX_DELAY);
+            currentTask->completion_time = pdMS_TO_TICKS(xTaskGetTickCount());
             vTaskResume(DDS);
             vTaskSuspend(currentTask->task);
         }

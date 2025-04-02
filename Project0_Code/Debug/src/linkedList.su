@@ -5,4 +5,5 @@ linkedList.c:40:6:insertAtPosition	32	static
 linkedList.c:58:6:deleteFromFirst	24	static
 linkedList.c:69:6:deleteFromEnd	24	static
 linkedList.c:88:6:deleteAtPosition	32	static
-linkedList.c:111:6:print	24	static
+linkedList.c:110:5:count	24	static
+linkedList.c:121:6:print	24	static

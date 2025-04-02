@@ -188,7 +188,6 @@ TaskHandle_t Monitor;
 
 int main(void)
 {
-	printf("here\n");
 
 	/* Configure the system ready to run the demo.  The clock configuration
 	can be done here if it was not done before main() was called. */
@@ -206,14 +205,12 @@ int main(void)
 
 	Result_Queue = xQueueCreate(mainQUEUE_LENGTH, sizeof(int) );
 
-	printf("Queues created successfully\n");
 	/* Add to the registry, for the benefit of kernel aware debugging. */
-
-	printf("At line 207\n");
 
 	vQueueAddToRegistry( Generator_Queue, "Generator_Queue" );
 	vQueueAddToRegistry( User_Defined_Queue, "User_Defined_Queue" );
 	vQueueAddToRegistry( Monitor_Queue, "Monitor_Queue" );
+	vQueueAddToRegistry( Result_Queue, "Result_Queue" );
 
 	xTaskCreate( DDS_Task, "DDS", configMINIMAL_STACK_SIZE, NULL, 2, &DDS);
 	xTaskCreate( Gen1_Task, "Gen1", configMINIMAL_STACK_SIZE, NULL, 2, &Gen1);
@@ -252,7 +249,6 @@ static void DDS_Task( void *pvParameters )
 			lists.completedHead = completedHead;
 			lists.overdueHead = overdueHead;
 			if(xQueueSend(Monitor_Queue, &lists, 1000))
-				printf("DDS: Gave monitorSemaphore\n");
 				xSemaphoreGive(monitorSemaphore);
 		}
 		if( xQueueReceive(Generator_Queue,&temp_node,1000))
@@ -267,6 +263,8 @@ static void DDS_Task( void *pvParameters )
 		}
 		if(activeHead != NULL && activeHead->next != NULL){
 			activeHead = MergeSort(activeHead);
+		} else {
+			continue;
 		}
 		checkOverdue(&activeHead, &overdueHead);
 		struct taskListNode* activeNode = activeHead; // pointers may be wrong here
@@ -278,13 +276,13 @@ static void DDS_Task( void *pvParameters )
 		checkOverdue(&activeHead, &overdueHead);
 		if(xQueueReceive(Result_Queue, &result, 1000)){
 			deleteFromFirst(&activeHead);
-			if(result){
-				printf("Moving node %p [id=%d] from activeHead to completedHead\n", (void*)temp_node, temp_node->task_id);
+			if(result == 1){
 				insertAtEnd(&completedHead, temp_node);
 			}else{
 				insertAtEnd(&overdueHead, temp_node);
 			}
 		}
+		result = 0;
 	}
 }
 
@@ -295,12 +293,9 @@ static void Monitor_Task( void *pvParameters )
 	while(1){
 		if(xSemaphoreTake(monitorSemaphore, portMAX_DELAY) == pdTRUE){
 			if(xQueueReceive(Monitor_Queue, &lists, 1000)){
-				printf("Active Tasks\n");
-				print(lists.activeHead);
-				printf("Completed Tasks\n");
-				print(lists.completedHead);
-				printf("Overdue Tasks\n");
-				print(lists.overdueHead);
+				printf("Active Tasks: %d\n", count(lists.activeHead));
+				printf("Completed Tasks: %d\n", count(lists.completedHead));
+				printf("Overdue Tasks: %d\n", count(lists.overdueHead));
 			}
 		}
 	}
