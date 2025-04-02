@@ -3,7 +3,7 @@ linkedList.c:20:6:insertAtFirst	16	static
 linkedList.c:26:6:insertAtEnd	24	static
 linkedList.c:40:6:insertAtPosition	32	static
 linkedList.c:58:6:deleteFromFirst	24	static
-linkedList.c:69:6:deleteFromEnd	24	static
-linkedList.c:88:6:deleteAtPosition	32	static
-linkedList.c:110:5:count	24	static
-linkedList.c:121:6:print	24	static
+linkedList.c:68:6:deleteFromEnd	24	static
+linkedList.c:86:6:deleteAtPosition	32	static
+linkedList.c:107:5:count	24	static
+linkedList.c:118:6:print	24	static

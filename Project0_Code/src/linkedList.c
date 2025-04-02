@@ -57,7 +57,6 @@ void insertAtPosition(struct taskListNode** head, struct taskListNode* node, int
 // Function to delete the first node of the singly linked list
 void deleteFromFirst(struct taskListNode** head) {
     if (*head == NULL) {
-        printf("List is empty\n");
         return;
     }
     struct taskListNode* temp = *head;
@@ -68,7 +67,6 @@ void deleteFromFirst(struct taskListNode** head) {
 // Function to delete the last node of the singly linked list
 void deleteFromEnd(struct taskListNode** head) {
     if (*head == NULL) {
-        printf("List is empty\n");
         return;
     }
     struct taskListNode* temp = *head;
@@ -87,7 +85,6 @@ void deleteFromEnd(struct taskListNode** head) {
 // Function to delete a node at a specific position in the singly linked list
 void deleteAtPosition(struct taskListNode** head, int position) {
     if (*head == NULL) {
-        printf("List is empty\n");
         return;
     }
     struct taskListNode* temp = *head;
@@ -120,8 +117,8 @@ int count(struct taskListNode* head){
 // Function to print the LinkedList
 void print(struct taskListNode* head) {
 	if(head == NULL)
-		printf("List Empty\n");
-    struct taskListNode* temp = head;
+		return;
+	struct taskListNode* temp = head;
     while (temp != NULL) {
         printf("Task %d: Completed Time: %d, Expected Time: %d", temp->task_id, temp->completion_time, temp->period+temp->release_time);
         temp = temp->next;

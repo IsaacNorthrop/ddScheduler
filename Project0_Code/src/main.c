@@ -233,14 +233,13 @@ static void DDS_Task( void *pvParameters )
 	struct taskListNode* completedHead = NULL;
 	struct taskListNode* overdueHead = NULL;
 	monitorSemaphore = xSemaphoreCreateBinary();
-
-	struct taskListNode* temp_node;
 	int result;
 
 	// task, exec_time, period, id
 
 	while(1)
 	{
+		struct taskListNode* temp_node;
 		int elapsed_time = xTaskGetTickCount() - start_time;
 		if(elapsed_time >= pdMS_TO_TICKS(1500)){
 			start_time = xTaskGetTickCount();
@@ -253,6 +252,7 @@ static void DDS_Task( void *pvParameters )
 		}
 		if( xQueueReceive(Generator_Queue,&temp_node,1000))
 		{
+			temp_node = createNode(temp_node->task, temp_node->execution_time, temp_node->period, temp_node->task_id);
 			temp_node->release_time = pdTICKS_TO_MS(xTaskGetTickCount());
 			temp_node->deadline = temp_node->release_time + temp_node->period;
 			insertAtEnd(&activeHead, temp_node);
@@ -267,10 +267,10 @@ static void DDS_Task( void *pvParameters )
 			continue;
 		}
 		checkOverdue(&activeHead, &overdueHead);
-		struct taskListNode* activeNode = activeHead; // pointers may be wrong here
-		activeNode->next = NULL;
-		if(xQueueSend(User_Defined_Queue, &activeNode, 1000)){
-			vTaskResume(activeNode->task);
+		//struct taskListNode* activeNode = activeHead; // pointers may be wrong here
+		//activeNode->next = NULL;
+		if(xQueueSend(User_Defined_Queue, &activeHead, 1000)){
+			vTaskResume(activeHead->task);
 			vTaskSuspend(DDS);
 		}
 		checkOverdue(&activeHead, &overdueHead);
