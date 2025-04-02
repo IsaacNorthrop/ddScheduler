@@ -24,6 +24,7 @@ void insertAtFirst(struct taskListNode** head, struct taskListNode* node) {
 
 // Function to insert a new element at the end of the singly linked list
 void insertAtEnd(struct taskListNode** head, struct taskListNode* node) {
+    printf("insertAtEnd: inserting node %p [id=%d] into list head @ %p\n", (void*)node, node->task_id, (void*)*head);
     if (*head == NULL) {
         *head = node;
         return;
@@ -108,11 +109,27 @@ void deleteAtPosition(struct taskListNode** head, int position) {
 
 // Function to print the LinkedList
 void print(struct taskListNode* head) {
-    struct taskListNode* temp = head;
-    while (temp != NULL) {
-        printf("Task ID: %d, Deadline %d\n", temp->task_id, temp->deadline);
-        temp = temp->next;
+    struct taskListNode* slow = head;
+    struct taskListNode* fast = head;
+
+    while (slow != NULL) {
+        printf("Task ID: %d, Deadline %d\n", slow->task_id, slow->deadline);
+        slow = slow->next;
+
+        // Move fast pointer two steps at a time:
+        if (fast && fast->next) {
+            fast = fast->next->next;
+        } else {
+            fast = NULL;
+        }
+
+        // If fast == slow, we have a cycle:
+        if (fast && fast == slow) {
+            printf("Detected cycle in the list!\n");
+            return;
+        }
     }
     printf("\n");
 }
+
 

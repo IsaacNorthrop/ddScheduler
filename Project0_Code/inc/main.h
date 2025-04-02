@@ -31,6 +31,7 @@ static void Monitor_Task( void *pvParameters );
 xQueueHandle Generator_Queue;
 xQueueHandle User_Defined_Queue;
 xQueueHandle Monitor_Queue;
+xQueueHandle Result_Queue;
 
 TaskHandle_t DDS;
 TaskHandle_t Gen1;
