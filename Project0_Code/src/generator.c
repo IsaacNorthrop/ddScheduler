@@ -53,6 +53,8 @@ void Gen3_Task (void *taskParamters){
 void createDDTask (TaskHandle_t task, int id, int executionTime, int period){
 
 	struct taskListNode* newTask = createNode(task, executionTime, period, id);
+	newTask->release_time = pdTICKS_TO_MS(xTaskGetTickCount());
+	newTask->deadline = newTask->release_time + newTask->period;
 
 	if (newTask == NULL){
 		printf("createDDTask: Unable to create task: %d\n", id);
@@ -60,7 +62,7 @@ void createDDTask (TaskHandle_t task, int id, int executionTime, int period){
 
 	// Send the task to the user-defined task queue
 	if (!xQueueSend(Generator_Queue, &newTask, 1000)) {
-		printf("createDDTask: Failed to send task %d to User_Defined_Queue\n", id);
+		printf("createDDTask: Failed to send task %d to Generator Queue\n", id);
 		free(newTask);  // Only free if it never made it to the user-defined task
 	}
 }

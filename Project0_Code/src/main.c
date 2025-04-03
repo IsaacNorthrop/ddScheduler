@@ -154,7 +154,7 @@ functionality.
 #include "../inc/main.h"
 
 /*-----------------------------------------------------------*/
-#define mainQUEUE_LENGTH 2
+#define mainQUEUE_LENGTH 5
 
 /*
  * TODO: Implement this function for any hardware specific clock configuration
@@ -250,7 +250,7 @@ static void DDS_Task( void *pvParameters )
 			if(xQueueSend(Monitor_Queue, &lists, 1000))
 				xSemaphoreGive(monitorSemaphore);
 		}
-		if( xQueueReceive(Generator_Queue,&temp_node,1000))
+		/*if( xQueueReceive(Generator_Queue,&temp_node,1000))
 		{
 			temp_node = createNode(temp_node->task, temp_node->execution_time, temp_node->period, temp_node->task_id);
 			temp_node->release_time = pdTICKS_TO_MS(xTaskGetTickCount());
@@ -260,13 +260,19 @@ static void DDS_Task( void *pvParameters )
 		else
 		{
 			printf("Manager Failed!\n");
+		}*/
+		while(xQueueReceive(Generator_Queue,&temp_node,1) == pdTRUE)
+		{
+			/*temp_node = createNode(temp_node->task, temp_node->execution_time, temp_node->period, temp_node->task_id);
+			temp_node->release_time = pdTICKS_TO_MS(xTaskGetTickCount());
+			temp_node->deadline = temp_node->release_time + temp_node->period;*/
+			insertAtEnd(&activeHead, temp_node);
 		}
 		if(activeHead != NULL && activeHead->next != NULL){
 			activeHead = MergeSort(activeHead);
 		} else if(activeHead == NULL) {
 			continue;
 		}
-		//checkOverdue(&activeHead, &overdueHead);
 		if(activeHead != NULL){
 			if(xQueueSend(User_Defined_Queue, &activeHead, 1000)){
 				vTaskResume(activeHead->task);
@@ -274,11 +280,12 @@ static void DDS_Task( void *pvParameters )
 			}
 			if(xQueueReceive(Result_Queue, &result, 1000)){
 				struct taskListNode* temp = activeHead;
+				activeHead = activeHead->next;
 				temp->next = NULL;
-				deleteFromFirst(&activeHead);
+				//deleteFromFirst(&activeHead);
 				if(temp->completion_time <= temp->deadline){
 					insertAtFirst(&completedHead, temp);
-				}else{
+				} else {
 					insertAtFirst(&overdueHead, temp);
 				}
 			}
