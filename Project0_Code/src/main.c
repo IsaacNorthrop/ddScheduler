@@ -154,7 +154,7 @@ functionality.
 #include "../inc/main.h"
 
 /*-----------------------------------------------------------*/
-#define mainQUEUE_LENGTH 100
+#define mainQUEUE_LENGTH 2
 
 /*
  * TODO: Implement this function for any hardware specific clock configuration
@@ -199,11 +199,11 @@ int main(void)
 	// size of each item needs to be adjusted
 	Generator_Queue = xQueueCreate(	mainQUEUE_LENGTH, sizeof( struct taskListNode* ) );
 
-	User_Defined_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( struct taskListNode* ) );
+	User_Defined_Queue = xQueueCreate(2, sizeof( struct taskListNode* ) );
 
-	Monitor_Queue = xQueueCreate( 	mainQUEUE_LENGTH, sizeof( struct ListGroup ) );
+	Monitor_Queue = xQueueCreate(2, sizeof( struct ListGroup ) );
 
-	Result_Queue = xQueueCreate(mainQUEUE_LENGTH, sizeof(int) );
+	Result_Queue = xQueueCreate(2, sizeof(int) );
 
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 
@@ -214,8 +214,8 @@ int main(void)
 
 	xTaskCreate( DDS_Task, "DDS", configMINIMAL_STACK_SIZE, NULL, 2, &DDS);
 	xTaskCreate( Gen1_Task, "Gen1", configMINIMAL_STACK_SIZE, NULL, 2, &Gen1);
-	//xTaskCreate( Gen2_Task, "Gen2", configMINIMAL_STACK_SIZE, NULL, 2, &Gen2);
-	//xTaskCreate( Gen3_Task, "Gen3", configMINIMAL_STACK_SIZE, NULL, 2, &Gen3);
+	xTaskCreate( Gen2_Task, "Gen2", configMINIMAL_STACK_SIZE, NULL, 2, &Gen2);
+	xTaskCreate( Gen3_Task, "Gen3", configMINIMAL_STACK_SIZE, NULL, 2, &Gen3);
 	xTaskCreate( Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, &Monitor);
 
 	/* Start the tasks and timer running. */
@@ -263,23 +263,24 @@ static void DDS_Task( void *pvParameters )
 		}
 		if(activeHead != NULL && activeHead->next != NULL){
 			activeHead = MergeSort(activeHead);
-		} else {
+		} else if(activeHead == NULL) {
 			continue;
 		}
-		checkOverdue(&activeHead, &overdueHead);
-		//struct taskListNode* activeNode = activeHead; // pointers may be wrong here
-		//activeNode->next = NULL;
-		if(xQueueSend(User_Defined_Queue, &activeHead, 1000)){
-			vTaskResume(activeHead->task);
-			vTaskSuspend(DDS);
-		}
-		checkOverdue(&activeHead, &overdueHead);
-		if(xQueueReceive(Result_Queue, &result, 1000)){
-			deleteFromFirst(&activeHead);
-			if(result == 1){
-				insertAtEnd(&completedHead, temp_node);
-			}else{
-				insertAtEnd(&overdueHead, temp_node);
+		//checkOverdue(&activeHead, &overdueHead);
+		if(activeHead != NULL){
+			if(xQueueSend(User_Defined_Queue, &activeHead, 1000)){
+				vTaskResume(activeHead->task);
+				vTaskSuspend(DDS);
+			}
+			if(xQueueReceive(Result_Queue, &result, 1000)){
+				struct taskListNode* temp = activeHead;
+				temp->next = NULL;
+				deleteFromFirst(&activeHead);
+				if(temp->completion_time <= temp->deadline){
+					insertAtFirst(&completedHead, temp);
+				}else{
+					insertAtFirst(&overdueHead, temp);
+				}
 			}
 		}
 		result = 0;

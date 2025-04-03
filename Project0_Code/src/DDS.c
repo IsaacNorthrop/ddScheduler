@@ -12,6 +12,7 @@ void checkOverdue(struct taskListNode** active, struct taskListNode** overdue) {
     struct taskListNode* temp = *active;
     while (temp != NULL) {  // Go through the entire list
         int current_time = xTaskGetTickCount();  // Get the current time from FreeRTOS
+        int deadline = pdMS_TO_TICKS(temp->deadline);
         if (current_time > pdMS_TO_TICKS(temp->deadline)) {  // Task is overdue
             insertAtEnd(overdue, temp);  // Pass pointer directly, no need for &temp
             deleteAtPosition(active, position);  // Correct function name

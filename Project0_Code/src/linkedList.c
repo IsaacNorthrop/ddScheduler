@@ -61,7 +61,7 @@ void deleteFromFirst(struct taskListNode** head) {
     }
     struct taskListNode* temp = *head;
     *head = temp->next;
-    free(temp);
+    //free(temp);
 }
 
 // Function to delete the last node of the singly linked list
