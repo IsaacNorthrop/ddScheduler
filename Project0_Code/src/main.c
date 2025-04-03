@@ -264,8 +264,8 @@ static void DDS_Task( void *pvParameters )
 		while(xQueueReceive(Generator_Queue,&temp_node,1) == pdTRUE)
 		{
 			/*temp_node = createNode(temp_node->task, temp_node->execution_time, temp_node->period, temp_node->task_id);
-			temp_node->release_time = pdTICKS_TO_MS(xTaskGetTickCount());
-			temp_node->deadline = temp_node->release_time + temp_node->period;*/
+			temp_node->release_time = pdTICKS_TO_MS(xTaskGetTickCount());*/
+			temp_node->deadline = temp_node->release_time + temp_node->period;
 			insertAtEnd(&activeHead, temp_node);
 		}
 		if(activeHead != NULL && activeHead->next != NULL){
@@ -275,6 +275,8 @@ static void DDS_Task( void *pvParameters )
 		}
 		if(activeHead != NULL){
 			if(xQueueSend(User_Defined_Queue, &activeHead, 1000)){
+		//int releaseTime = pdTICKS_TO_MS(xTaskGetTickCount());
+		//printf("Task %d released at %d\n", activeHead->task_id, releaseTime);
 				vTaskResume(activeHead->task);
 				vTaskSuspend(DDS);
 			}
@@ -284,6 +286,8 @@ static void DDS_Task( void *pvParameters )
 				temp->next = NULL;
 				//deleteFromFirst(&activeHead);
 				if(temp->completion_time <= temp->deadline){
+			//int completionTime = pdTICKS_TO_MS(xTaskGetTickCount());
+		//	printf("Task %d completed at %d\n",temp->task_id,completionTime);
 					insertAtFirst(&completedHead, temp);
 				} else {
 					insertAtFirst(&overdueHead, temp);
