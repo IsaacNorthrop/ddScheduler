@@ -1,26 +1,25 @@
-/*
- * userDefined.c
- *
- *  Created on: Mar 27, 2025
- *      Author: liamtanner
+/**
+ * @file userDefined.c
+ * @author Isaac Northrop and Liam Tanner
+ * @brief Handles execution time of current task.
+ * @version 0.1
+ * @date 2025-04-03
+ * 
+ * @copyright Copyright (c) 2025
+ * 
  */
 
 #include "../inc/userDefined.h"
-#include "../inc/linkedList.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include <stdio.h>
-#include "../FreeRTOS_Source/include/FreeRTOS.h"
-#include "../FreeRTOS_Source/include/queue.h"
-#include "../FreeRTOS_Source/include/semphr.h"
-#include "../FreeRTOS_Source/include/task.h"
-#include "../FreeRTOS_Source/include/timers.h"
-#include "../inc/main.h"
 
 extern xQueueHandle User_Defined_Queue;
 extern xQueueHandle Result_Queue;
 extern TaskHandle_t DDS;
+
+/**
+ * @brief Simulate execution time of each DD-Task.
+ * 
+ * @param pvParameters 
+ */
 
 void User_Defined_Task(void *pvParameters) {
 
@@ -28,7 +27,7 @@ void User_Defined_Task(void *pvParameters) {
     int result;
 
     while (1) {
-        // Wait for task pointer from DDS
+        /* Wait for task pointer from DDS. */
     	result = 0;
         if ( xQueueReceive(User_Defined_Queue,&currentTask,1000)) {
 
@@ -37,7 +36,7 @@ void User_Defined_Task(void *pvParameters) {
 
             vTaskDelayUntil(&start, duration);
 
-            result = 1; // 1 for success
+            result = 1;
             xQueueSend(Result_Queue, &result, portMAX_DELAY);
             currentTask->completion_time = pdMS_TO_TICKS(xTaskGetTickCount());
             vTaskResume(DDS);

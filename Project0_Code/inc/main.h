@@ -1,3 +1,14 @@
+/**
+ * @file main.h
+ * @author Isaac Northrop and Liam Tanner
+ * @brief Standard definitions for main.c
+ * @version 0.1
+ * @date 2025-04-03
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
+
 #ifndef MAIN_H_
 #define MAIN_H_
 
@@ -16,11 +27,10 @@
 /* Local includes. */
 #include "../inc/DDS.h"
 #include "../inc/linkedList.h"
-#include "../inc/DDS.h"
 #include "../inc/mergeSort.h"
 #include "../inc/generator.h"
 
-#define mainQUEUE_LENGTH 100
+#define mainQUEUE_LENGTH 5
 
 static void prvSetupHardware( void );
 
@@ -33,6 +43,8 @@ xQueueHandle User_Defined_Queue;
 xQueueHandle Monitor_Queue;
 xQueueHandle Result_Queue;
 
+SemaphoreHandle_t monitorSemaphore;
+
 TaskHandle_t DDS;
 TaskHandle_t Gen1;
 TaskHandle_t Gen2;
@@ -42,12 +54,8 @@ TaskHandle_t Monitor;
 int main(void);
 
 static void DDS_Task( void *pvParameters );
-
-
 static void Monitor_Task( void *pvParameters );
-
 void vApplicationMallocFailedHook( void );
-
 void vApplicationStackOverflowHook( xTaskHandle pxTask, signed char *pcTaskName );
 void vApplicationIdleHook( void );
 static void prvSetupHardware( void );

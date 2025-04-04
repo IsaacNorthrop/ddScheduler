@@ -1,10 +1,26 @@
-#include "../inc/linkedList.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include "FreeRTOS.h"
-#include "task.h"
+/**
+ * @file linkedList.c
+ * @author Isaac Northrop and Liam Tanner
+ * @brief Definitions for linked list data structure.
+ * @version 0.1
+ * @date 2025-04-03
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 
-// Function to create a new node
+#include "../inc/linkedList.h"
+
+/**
+ * @brief Create a Node object.
+ * 
+ * @param task 
+ * @param execution_time 
+ * @param period 
+ * @param id 
+ * @return struct taskListNode* 
+ */
+
 struct taskListNode* createNode(TaskHandle_t task, int execution_time, int period, int id) {
     struct taskListNode* newNode = (struct taskListNode*)malloc(sizeof(struct taskListNode));
     newNode->execution_time = execution_time;
@@ -16,13 +32,25 @@ struct taskListNode* createNode(TaskHandle_t task, int execution_time, int perio
     return newNode;
 }
 
-// Function to insert a new element at the beginning of the singly linked list
+/**
+ * @brief Insert node at the front of a list.
+ * 
+ * @param head 
+ * @param node 
+ */
+
 void insertAtFirst(struct taskListNode** head, struct taskListNode* node) {
     node->next = *head;
     *head = node;
 }
 
-// Function to insert a new element at the end of the singly linked list
+/**
+ * @brief Insert node at the end of a list.
+ * 
+ * @param head 
+ * @param node 
+ */
+
 void insertAtEnd(struct taskListNode** head, struct taskListNode* node) {
 	node->next = NULL;
     if (*head == NULL) {
@@ -36,7 +64,14 @@ void insertAtEnd(struct taskListNode** head, struct taskListNode* node) {
     temp->next = node;
 }
 
-// Function to insert a new element at a specific position in the singly linked list
+/**
+ * @brief Insert node at some specified position in a list.
+ * 
+ * @param head 
+ * @param node 
+ * @param position 
+ */
+
 void insertAtPosition(struct taskListNode** head, struct taskListNode* node, int position) {
     if (position == 0) {
         insertAtFirst(head, node);
@@ -54,17 +89,26 @@ void insertAtPosition(struct taskListNode** head, struct taskListNode* node, int
     temp->next = node;
 }
 
-// Function to delete the first node of the singly linked list
+/**
+ * @brief Delete first item in a list.
+ * 
+ * @param head 
+ */
+
 void deleteFromFirst(struct taskListNode** head) {
     if (*head == NULL) {
         return;
     }
     struct taskListNode* temp = *head;
     *head = temp->next;
-    //free(temp);
 }
 
-// Function to delete the last node of the singly linked list
+/**
+ * @brief Delete last item in a list.
+ * 
+ * @param head 
+ */
+
 void deleteFromEnd(struct taskListNode** head) {
     if (*head == NULL) {
         return;
@@ -82,7 +126,13 @@ void deleteFromEnd(struct taskListNode** head) {
     temp->next = NULL;
 }
 
-// Function to delete a node at a specific position in the singly linked list
+/**
+ * @brief Delete item from some position in some list.
+ * 
+ * @param head 
+ * @param position 
+ */
+
 void deleteAtPosition(struct taskListNode** head, int position) {
     if (*head == NULL) {
         return;
@@ -104,6 +154,13 @@ void deleteAtPosition(struct taskListNode** head, int position) {
     temp->next = next;
 }
 
+/**
+ * @brief Count the items in some list.
+ * 
+ * @param head 
+ * @return int 
+ */
+
 int count(struct taskListNode* head){
 	int count = 0;
     struct taskListNode* temp = head;
@@ -114,7 +171,12 @@ int count(struct taskListNode* head){
 	return count;
 }
 
-// Function to print the LinkedList
+/**
+ * @brief Print the items in some list to the SVW Console.
+ * 
+ * @param head 
+ */
+
 void print(struct taskListNode* head) {
 	if(head == NULL)
 		return;
